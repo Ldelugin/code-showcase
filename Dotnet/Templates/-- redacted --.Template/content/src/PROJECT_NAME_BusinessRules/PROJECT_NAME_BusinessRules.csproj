@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Configurations>Release;Debug</Configurations>
+        <Platforms>x64</Platforms>
+    </PropertyGroup>
+    
+    <PropertyGroup Label="Custom properties">
+        <CopyToArtifactsDirectory>True</CopyToArtifactsDirectory>
+    </PropertyGroup>
+
+    <ItemGroup Label="Business Rules dependencies">
+        <PackageReference Include="-- redacted --" Version="$(-- redacted --Version)" />
+    </ItemGroup>
+
+</Project>

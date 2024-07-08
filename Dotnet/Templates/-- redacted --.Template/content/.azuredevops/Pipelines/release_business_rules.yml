@@ -1,0 +1,100 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+
+pool:
+  vmImage: windows-2022
+  demands:
+    - msbuild
+    - visualstudio
+    - Cmd
+    - vstest
+
+variables:
+  Solution: '**\*.sln'
+  BuildPlatform: 'x64'
+  BuildConfiguration: 'release'
+  Version: ''
+
+steps:
+  - checkout: self
+    persistCredentials: true
+
+  - task: NuGetToolInstaller@1
+    displayName: 'Use NuGet 6'
+    inputs:
+      versionSpec: 6
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet restore'
+    inputs:
+      restoreSolution: '$(Solution)'
+      feedsToUse: '**\nuget.config'
+
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        $xml = [Xml](Get-Content src\PROJECT_NAME_BusinessRules\PROJECT_NAME_BusinessRules.csproj)
+        $version = $xml.Project.PropertyGroup.Version
+        echo $version
+        echo "##vso[task.setvariable variable=Version]$version"
+
+  - task: VSBuild@1
+    displayName: 'Build solution **\*.sln'
+    inputs:
+      solution: '$(Solution)'
+      platform: '$(BuildPlatform)'
+      configuration: '$(BuildConfiguration)'
+      maximumCpuCount: true
+      msbuildArchitecture: x64
+
+#if (IncludeTest)
+  - task: VSTest@2
+    displayName: 'VsTest - testAssemblies'
+    inputs:
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: |
+        **\Project\**\*test*.dll
+        !**\obj\**
+        !**\*testhost.dll
+        !**\*TestAdapter.dll
+        !**\ref\**
+        !**\Microsoft*.dll
+      searchFolder: '$(System.DefaultWorkingDirectory)'
+      platform: '$(BuildPlatform)'
+      configuration: '$(BuildConfiguration)'
+      rerunFailedTests: true
+      rerunFailedThreshold: 5
+      rerunMaxAttempts: 2
+#endif
+
+  - task: CopyFiles@2
+    displayName: 'Copy Business Rules DLL to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      SourceFolder: 'PROJECT_NAME_\artifacts'
+      Contents: '*'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      CleanTargetFolder: true
+      FlattenFolders: true
+
+  - task: GitTag@5
+    displayName: 'Tag source code with version number'
+    inputs:
+      workingdir: '$(System.DefaultWorkingDirectory)'
+      tagUser: AzureDevOps
+      tagEmail: 'tag@build-pipeline.azure'
+      tag: '$(Version)'
+      tagMessage: 'Creating tag for release: $(Version)'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+  - task: VSTSToolsKeep@1
+    inputs:
+      targetbranch: 'main'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: Release X64 $(Version)'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'Release_X64_$(Version)'

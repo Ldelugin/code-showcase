@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\GlobalSettings.props" />
+    <Import Project="..\..\CommonNuGetPackage.props" />
+    <PropertyGroup>
+        <PackageId>SoapServices</PackageId>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <RootNamespace>-- redacted --</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="..\..\GlobalAssemblyInfo.cs" Link="GlobalAssemblyInfo.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="-- redacted --" />
+        <ProjectReference Include="..\SchemaValidation\SchemaValidation.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="SoapCore" Version="1.1.0.39" />
+    </ItemGroup>
+</Project>

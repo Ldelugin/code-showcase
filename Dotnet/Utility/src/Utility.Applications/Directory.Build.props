@@ -1,0 +1,15 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <SelfContained>true</SelfContained>
+        <PublishSingleFile>true</PublishSingleFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Utility.Libraries\Utility.Libraries.ServiceReferences\Utility.Libraries.ServiceReferences.csproj" />
+        <ProjectReference Include="..\..\Utility.Libraries\Utility.Libraries.Shared\Utility.Libraries.Shared.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROJECT_NAME_BusinessRules", "src\PROJECT_NAME_BusinessRules\PROJECT_NAME_BusinessRules.csproj", "{91B74F52-8C4A-4DB5-80EA-CEA83079DCE4}"
+EndProject
+#if (IncludeTest)
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROJECT_NAME_BusinessRulesTests", "src\PROJECT_NAME_BusinessRulesTests\PROJECT_NAME_BusinessRulesTests.csproj", "{AD516C07-A9D7-4722-8A7F-AA1055EA88D7}"
+EndProject
+#endif
+#if (IncludeBridge)
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROJECT_NAME_BridgePlugin", "src\PROJECT_NAME_BridgePlugin\PROJECT_NAME_BridgePlugin.csproj", "{9CC60926-78C6-4A7A-8450-CF82FE11F96A}"
+EndProject
+#if (IncludeTest)
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROJECT_NAME_BridgePluginTests", "src\PROJECT_NAME_BridgePluginTests\PROJECT_NAME_BridgePluginTests.csproj", "{E5FA9B15-0B0C-45F0-9566-47ED7BBFBEEA}"
+EndProject
+#endif
+#endif
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|x64 = Release|x64
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+	#if (IncludeBridge)
+		{9CC60926-78C6-4A7A-8450-CF82FE11F96A}.Release|x64.ActiveCfg = Release|x64
+		{9CC60926-78C6-4A7A-8450-CF82FE11F96A}.Release|x64.Build.0 = Release|x64
+		{9CC60926-78C6-4A7A-8450-CF82FE11F96A}.Debug|x64.ActiveCfg = Debug|x64
+		{9CC60926-78C6-4A7A-8450-CF82FE11F96A}.Debug|x64.Build.0 = Debug|x64
+	#if (IncludeTest)
+		{E5FA9B15-0B0C-45F0-9566-47ED7BBFBEEA}.Release|x64.ActiveCfg = Release|x64
+		{E5FA9B15-0B0C-45F0-9566-47ED7BBFBEEA}.Release|x64.Build.0 = Release|x64
+		{E5FA9B15-0B0C-45F0-9566-47ED7BBFBEEA}.Debug|x64.ActiveCfg = Debug|x64
+		{E5FA9B15-0B0C-45F0-9566-47ED7BBFBEEA}.Debug|x64.Build.0 = Debug|x64
+	#endif
+	#endif
+		{91B74F52-8C4A-4DB5-80EA-CEA83079DCE4}.Release|x64.ActiveCfg = Release|x64
+		{91B74F52-8C4A-4DB5-80EA-CEA83079DCE4}.Release|x64.Build.0 = Release|x64
+		{91B74F52-8C4A-4DB5-80EA-CEA83079DCE4}.Debug|x64.ActiveCfg = Debug|x64
+		{91B74F52-8C4A-4DB5-80EA-CEA83079DCE4}.Debug|x64.Build.0 = Debug|x64
+	#if (IncludeTest)
+		{AD516C07-A9D7-4722-8A7F-AA1055EA88D7}.Release|x64.ActiveCfg = Release|x64
+		{AD516C07-A9D7-4722-8A7F-AA1055EA88D7}.Release|x64.Build.0 = Release|x64
+		{AD516C07-A9D7-4722-8A7F-AA1055EA88D7}.Debug|x64.ActiveCfg = Debug|x64
+		{AD516C07-A9D7-4722-8A7F-AA1055EA88D7}.Debug|x64.Build.0 = Debug|x64
+	#endif
+	EndGlobalSection
+EndGlobal

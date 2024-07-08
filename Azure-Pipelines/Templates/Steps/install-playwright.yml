@@ -1,0 +1,14 @@
+parameters:
+  # The build configuration to use.
+  BuildConfiguration: 'release'
+  
+  # The dotnet version
+  DotnetVersion: 'net8.0-windows'
+
+steps:
+  - task: PowerShell@2
+    displayName: Install playwright browsers with dependencies
+    inputs: 
+      targetType: filePath
+      filePath: './TestProjects/AutomatedUITests/bin/${{ parameters.BuildConfiguration }}/${{ parameters.DotnetVersion }}/win-x64/playwright.ps1'
+      arguments: install --with-deps chromium

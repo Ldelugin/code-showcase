@@ -1,0 +1,35 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+
+pool:
+  vmImage: windows-2022
+  demands:
+    - msbuild
+    - visualstudio
+    - Cmd
+    - vstest
+
+steps:
+  - checkout: self
+    persistCredentials: true
+
+  - task: NuGetToolInstaller@1
+    displayName: 'Use NuGet 6'
+    inputs:
+      versionSpec: 6
+
+  # .NET Core
+  # Build, test, package, or publish a dotnet application, or run a custom dotnet command
+  - task: DotNetCoreCLI@2
+    displayName: 'Build template project'
+    inputs:
+      command: build
+      projects: '**/-- redacted --.Template.csproj'
+      
+  - task: NuGetCommand@2
+    displayName: 'Publish the template NuGet package to -- redacted --Artifacts'
+    inputs:
+      command: push
+      feedsToUse: select
+      packagesToPush: '$(System.DefaultWorkingDirectory)/**/*.nupkg'
+      vstsFeed: '-- redacted --Artifacts'
+      publishVstsFeed: '-- redacted --Artifacts'

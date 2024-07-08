@@ -1,0 +1,31 @@
+parameters:
+  # The build configuration to use.
+  BuildConfiguration: 'release'
+  
+  # CodeCoverageEnabled
+  CodeCoverageEnabled: false
+  
+  # Url
+  Url: ''
+
+steps:
+  - task: VSTest@2
+    displayName: 'Automated UI Tests - Playwright'
+    env:
+      ADMIN_USER_PASSWORD: $(SECRET_ADMIN_USER_PASSWORD)
+      TEST_USER_PASSWORD: $(SECRET_TEST_USER_PASSWORD)
+    inputs: 
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: |
+        **\AutomatedUITests.dll
+        !**\obj\**
+      searchFolder: '$(System.DefaultWorkingDirectory)'
+      codeCoverageEnabled: ${{ parameters.CodeCoverageEnabled }}
+      configuration: ${{ parameters.BuildConfiguration }}
+      runSettingsFile: '$(System.DefaultWorkingDirectory)\TestProjects\AutomatedUITests\ci.runsettings'
+      runInParallel: true
+      overrideTestRunParameters: '-url $(Url)'
+      rerunFailedTests: true
+      rerunType: 'basedOnTestFailureCount'
+      rerunFailedTestCasesMaxLimit: '3'
+      rerunMaxAttempts: '3'

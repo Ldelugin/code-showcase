@@ -1,0 +1,9 @@
+steps:
+- task: UniversalPackages@0
+  displayName: 'Download Nats package'
+  inputs:
+    command: download
+    vstsFeed: '--redacted--/Nats'
+    vstsFeedPackage: 'nats'
+    vstsPackageVersion: '2.10.7'
+    downloadDirectory: external\Nats

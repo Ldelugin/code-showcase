@@ -1,0 +1,8 @@
+<Project>
+    <PropertyGroup Label="Version settings">
+        <-- redacted --Version Condition="'$(-- redacted --Version)' == ''">9.17.2.0</-- redacted --Version>
+        <ProjectVersion Condition="'$(ProjectVersion)' == ''">0.0.1.0</ProjectVersion>
+        <Version>$(ProjectVersion)</Version>
+        <AssemblyVersion>$(ProjectVersion)</AssemblyVersion>
+    </PropertyGroup>
+</Project>

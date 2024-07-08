@@ -1,0 +1,6 @@
+<Project>
+    <Target Name="PackagePlugin" AfterTargets="Build">
+        <MakeDir Directories="$(SolutionDir)\artifacts" />
+        <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="$(SolutionDir)\artifacts" />
+    </Target>
+</Project>

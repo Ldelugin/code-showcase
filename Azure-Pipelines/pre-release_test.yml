@@ -1,0 +1,224 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+
+pool:
+  vmImage: windows-2022
+  demands:
+    - msbuild
+    - visualstudio
+    - Cmd
+    - vstest
+
+parameters:
+- name: GrafanaEmailEnabled
+  displayName: Enable emailing for Grafana?
+  type: boolean
+  default: false
+
+variables:
+  AccountPassword: ''
+  AccountUserName: ''
+  Solution: '**\--redacted--.sln'
+  BuildConfiguration: 'release'
+  Url: 'https://localhost:5001/'
+  RunLocation: 'pipeline'
+  PIP_CACHE_DIR: $(Pipeline.Workspace)/.pip
+  NPM_CONFIG_CACHE: $(Pipeline.Workspace)/.npm
+  DotnetVersion: 'net8.0'
+  DotnetVersionWindows: 'net8.0-windows'
+  ReleaseType: 'Pre-Release_Test'
+  AgentImage: 'windows-2022'
+
+schedules:
+# Every Monday till Friday at midnight UTC
+- cron: "0 0 * * 1-5" # Cron schedule, see: https://crontab.guru/#0_0_*_*_1-5
+  displayName: Daily midnight build
+  branches:
+    include:
+      - development
+  always: false # Do not run if no changes were commited and the previous build succeeded
+  
+stages:
+  - stage: Build
+    displayName: Build
+    jobs:
+      - job: Build_Release
+        variables:
+          buildConfiguration : ${{ variables.BuildConfiguration }}
+        displayName: Build Release
+        pool:
+          vmImage: $(AgentImage)
+        steps:
+          - template: Templates/Steps/python.yml # Template reference
+            parameters:
+              PythonVersion: '3.11'
+
+          - template: Templates/Steps/--redacted--.yml # Template reference
+          - template: Templates/Steps/assembly-info-reader.yml # Template reference
+          - template: Templates/Steps/lint-proto-files.yml # Template reference
+          - template: Templates/Steps/dotnet-build.yml # Template reference
+            parameters:
+              Solution: ${{ variables.Solution }}
+              BuildConfiguration: ${{ variables.BuildConfiguration }}
+
+          - template: Templates/Steps/install-license-tools.yml # Template reference
+          - template: Templates/Steps/download-grafana.yml # Template reference
+          - template: Templates/Steps/download-nats.yml # Template reference
+          - template: Templates/Steps/run-post-build.yml # Template reference
+
+          - template: Templates/Steps/publish-self-contained-user-clients.yml # Template reference
+
+          - template: Templates/Steps/--redacted--.yml # Template reference
+
+          - template: Templates/Steps/localdb-start.yml # Template reference
+          - template: Templates/Steps/create-and-migrate-databases.yml # Template reference
+          - template: Templates/Steps/export-migration-script.yml # Template reference
+          - template: Templates/Steps/publish-release.yml # Template reference
+            parameters:
+              ReleaseType: ${{ variables.ReleaseType }}
+              Version: $(AssemblyInfo.AssemblyVersion)
+    
+  - stage: Unit_Test
+    displayName: Unit test
+    dependsOn: Build
+    jobs:
+      - job: Unit_Tests
+        displayName: Unit Tests
+        pool:
+          vmImage: $(AgentImage)
+        steps:
+          - template: Templates/Steps/dotnet-build.yml # Template reference
+            parameters:
+              Solution: ${{ variables.Solution }}
+              BuildConfiguration: ${{ variables.BuildConfiguration }}
+          - template: Templates/Steps/download-nats.yml # Template reference
+          - template: Templates/Steps/localdb-start.yml # Template reference
+          - template: Templates/Steps/visual-studio-tests.yml # Template reference
+            parameters:
+              Solution: ${{ variables.Solution }}
+              BuildConfiguration: ${{ variables.BuildConfiguration }}
+              CodeCoverageEnabled: false
+
+  - stage: Install_And_Run_Tests
+    displayName: Install and run tests
+    dependsOn: Build
+    jobs:
+      - job: Install
+        displayName: Install
+        pool:
+          vmImage: $(AgentImage)
+        steps:
+          - template: Templates/Steps/dotnet-build.yml # Template reference
+            parameters:
+              Solution: ${{ variables.Solution }}
+              BuildConfiguration: ${{ variables.BuildConfiguration }}
+          - template: Templates/Steps/assembly-info-reader.yml # Template reference
+          - template: Templates/Steps/localdb-start.yml # Template reference
+          - template: Templates/Steps/create-and-migrate-databases.yml # Template reference
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'current'
+              artifactName: '-- redacted --_${{ variables.ReleaseType }}_X64_$(AssemblyInfo.AssemblyVersion)'
+              targetPath: '$(System.DefaultWorkingDirectory)\release_artifacts'
+              
+          - task: PowerShell@2
+            displayName: 'Run script: prepare_demo.ps1'
+            env:
+              CERTIFICATE_PASSWORD: $(SECRET_CERTIFICATE_PASSWORD)
+            inputs:
+              targetType: filePath
+              filePath: './Scripts\prepare_demo.ps1'
+              arguments: '-UserName $(AccountUserName) -solutionDirectoryPath $(System.DefaultWorkingDirectory) -GrafanaEmailEnabled  $${{ parameters.GrafanaEmailEnabled }}'
+          
+          - template: Templates/Steps/--redacted--.yml # Template reference
+            
+          # Skip migrating the database, as that is already done by the tests
+          - powershell: |
+              --redacted--
+            displayName: 'Install'
+            env:
+              --redacted--
+            
+          - template: Templates/Steps/--redacted--.yml # Template reference
+          - template: Templates/Steps/install-playwright.yml # Template reference
+            parameters:
+              BuildConfiguration: ${{ variables.BuildConfiguration }}
+              DotnetVersion: ${{ variables.DotnetVersionWindows }}
+
+          - template: Templates/Steps/playwright-tests.yml # Template reference
+            parameters:
+              BuildConfiguration: ${{ variables.BuildConfiguration }}
+              CodeCoverageEnabled: false
+              Url: ${{ variables.Url }}
+
+          - task: VSTest@2
+            displayName: 'VsTest - Automated UI Tests - Priority 1'
+            env:
+              ADMIN_USER_PASSWORD: $(SECRET_ADMIN_USER_PASSWORD)
+              TEST_USER_PASSWORD: $(SECRET_TEST_USER_PASSWORD)
+            inputs:
+              testAssemblyVer2: |
+                **\$(BuildConfiguration)\${{ variables.DotnetVersion }}\win-x64\--redacted--.AutomatedUITests.dll
+                !**\obj\**
+              testFiltercriteria: 'TestCategory=AUTOMATED_UI_TESTS & Priority=1'
+              runSettingsFile: '$(system.defaultworkingdirectory)\TestProjects\--redacted--.AutomatedUITests\UiTest.runsettings'
+              overrideTestrunParameters: '-run_location $(RunLocation) -url $(Url)'
+              platform: '$(BuildPlatform)'
+              configuration: '$(BuildConfiguration)'
+              rerunFailedTests: true
+              rerunType: 'basedOnTestFailureCount'
+              rerunFailedTestCasesMaxLimit: '3'
+              rerunMaxAttempts: '3'
+              publishRunAttachments: true
+
+          - task: VSTest@2
+            displayName: 'VsTest - Automated UI Tests - Priority 2'
+            env:
+              ADMIN_USER_PASSWORD: $(SECRET_ADMIN_USER_PASSWORD)
+              TEST_USER_PASSWORD: $(SECRET_TEST_USER_PASSWORD)
+            inputs:
+              testAssemblyVer2: |
+                **\$(BuildConfiguration)\${{ variables.DotnetVersion }}\win-x64\--redacted--.AutomatedUITests.dll
+                !**\obj\**
+              testFiltercriteria: 'TestCategory=AUTOMATED_UI_TESTS & Priority=2'
+              runSettingsFile: '$(system.defaultworkingdirectory)\TestProjects\--redacted--.AutomatedUITests\UiTest.runsettings'
+              overrideTestrunParameters: '-run_location $(RunLocation) -url $(Url)'
+              configuration: '$(BuildConfiguration)'
+              rerunFailedTests: true
+              rerunType: 'basedOnTestFailurePercentage'
+              rerunFailedThreshold: '50'
+              rerunMaxAttempts: '3'
+              publishRunAttachments: true
+
+          - task: VSTest@2
+            displayName: 'VsTest - Automated UI Tests - Priority > 2'
+            env:
+              ADMIN_USER_PASSWORD: $(SECRET_ADMIN_USER_PASSWORD)
+              TEST_USER_PASSWORD: $(SECRET_TEST_USER_PASSWORD)
+            inputs:
+              testAssemblyVer2: |
+                **\$(BuildConfiguration)\${{ variables.DotnetVersion }}\win-x64\--redacted--.AutomatedUITests.dll
+                !**\obj\**
+              testFiltercriteria: 'TestCategory=AUTOMATED_UI_TESTS & Priority!=1 & Priority!=2'
+              runSettingsFile: '$(system.defaultworkingdirectory)\TestProjects\--redacted--.AutomatedUITests\UiTest.runsettings'
+              overrideTestrunParameters: '-run_location $(RunLocation) -url $(Url)'
+              configuration: '$(BuildConfiguration)'
+              rerunFailedTests: true
+              rerunType: 'basedOnTestFailurePercentage'
+              rerunFailedThreshold: '30'
+              rerunMaxAttempts: '3'
+              publishRunAttachments: true
+
+          - powershell: |
+              # Write your PowerShell commands here.
+
+              --redacted--
+
+            displayName: 'Run inline: Copy log/config files for debugging'
+            condition: succeededOrFailed()
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Artifact: log/config files'
+            inputs:
+              targetPath: 'c:\-- redacted --\temp'
+              artifactName: '$(System.JobAttempt)_-- redacted -- Log Files'
+            condition: succeededOrFailed()

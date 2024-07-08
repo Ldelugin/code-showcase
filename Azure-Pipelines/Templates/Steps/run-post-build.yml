@@ -1,0 +1,8 @@
+steps:
+- task: PowerShell@2
+  displayName: 'Run script: post_build.ps1'
+  inputs:
+    targetType: filePath
+    filePath: '$(System.DefaultWorkingDirectory)\post_build.ps1'
+    arguments: '-development $False -full'
+    pwsh: true  # Use powershell core

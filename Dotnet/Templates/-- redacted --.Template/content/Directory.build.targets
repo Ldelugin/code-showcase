@@ -1,0 +1,7 @@
+<Project>
+    <PropertyGroup>
+        <CopyToArtifactsDirectory Condition="'$(CopyToArtifactsDirectory)' == ''">False</CopyToArtifactsDirectory>
+    </PropertyGroup>
+    
+    <Import Project="eng/CopyToArtifactsDirectory.targets" Condition="$(CopyToArtifactsDirectory)" />
+</Project>

@@ -1,0 +1,36 @@
+parameters:
+  # The solution to restore.
+  Solution: ''
+
+  # The build configuration to use.
+  BuildConfiguration: 'release'
+  
+  # The version of the dotnet-ef tool to install.
+  Version: "8.0.*"
+
+steps:
+- task: NuGetAuthenticate@1
+  displayName: 'NuGet Private Feed Authentication'
+
+- task: DotNetCoreCLI@2
+  displayName: Install EF Tool
+  inputs:
+    command: custom
+    custom: 'tool '
+    arguments: 'update dotnet-ef --global --version ${{ parameters.Version }}'
+
+# Use the dotnet core task instead of the NuGetCommand task for modern .NET projects
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'config'
+    nugetConfigPath: '$(System.DefaultWorkingDirectory)\NuGet.Config'
+
+# .NET Core
+# Build, test, package, or publish a dotnet application, or run a custom dotnet command
+- task: DotNetCoreCLI@2
+  displayName: 'Build solution ${{ parameters.Solution }}'
+  inputs:
+    command: 'build'
+    arguments: '--configuration ${{ parameters.BuildConfiguration }}'

@@ -1,0 +1,205 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "-- redacted --",
+  "icon": "icon.ico",
+  "classifications": ["Solution", "BusinessRules", "-- redacted --"],
+  "name": "-- redacted --",
+  "shortName": "br",
+  "defaultName": "ProjectName",
+  "sourceName": "PROJECT_NAME_",
+  "identity": "-- redacted --.BusinessRules.Solution.CSharp",
+  "groupIdentity": "-- redacted --.BusinessRules.CSharp",
+  "tags": {
+    "language": "c#",
+    "type": "solution"
+  },
+  "guids": [
+    "9CC60926-78C6-4A7A-8450-CF82FE11F96A",
+    "E5FA9B15-0B0C-45F0-9566-47ED7BBFBEEA",
+    "91B74F52-8C4A-4DB5-80EA-CEA83079DCE4",
+    "AD516C07-A9D7-4722-8A7F-AA1055EA88D7"
+  ],
+  "preferNameDirectory": true,
+  "symbols": {
+    "IncludeTest": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Gets or sets the value indicating whether to include test projects or not."
+    },
+    "Include-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Gets or sets the value indicating whether to include -- redacted -- projects or not."
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Gets or sets the value indicating whether the -- redacted -- feature is enabled or not."
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "-- redacted --",
+      "description": "Gets or sets the value indicating which -- redacted -- to use.",
+      "choices": [{
+        "choice": "-- redacted --",
+        "description": "-- redacted --"
+      },{
+        "choice": "-- redacted --",
+        "description": "-- redacted --"
+      },{
+        "choice": "-- redacted --",
+        "description": "-- redacted --"
+      },{
+        "choice": "-- redacted --",
+        "description": "-- redacted --"
+      },{
+        "choice": "custom",
+        "description": "-- redacted --"
+      }]
+    },
+    "-- redacted --": {
+      "type": "computed",
+      "value": "(-- redacted -- == \"-- redacted --\")"
+    },
+    "-- redacted --": {
+      "type": "computed",
+      "value": "(-- redacted -- == \"-- redacted --\")"
+    },
+    "-- redacted --": {
+      "type": "computed",
+      "value": "(-- redacted -- == \"-- redacted --\")"
+    },
+    "-- redacted --": {
+      "type": "computed",
+      "value": "(-- redacted -- == \"-- redacted --\")"
+    },
+    "-- redacted --": {
+      "type": "computed",
+      "value": "(-- redacted -- == \"custom\")"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "",
+      "replaces": "-- redacted --",
+      "description": "-- redacted --",
+      "isEnabled": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "-- redacted --",
+      "isEnabled": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "-- redacted --",
+      "isEnabled": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "-- redacted --",
+      "isEnabled": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "default",
+      "replaces": "-- redacted --",
+      "description": "-- redacted --",
+      "isEnabled": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "default",
+      "replaces": "-- redacted --",
+      "description": "-- redacted --",
+      "isEnabled": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "default",
+      "replaces": "-- redacted --",
+      "description": "-- redacted --",
+      "isEnabled": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "-- redacted --",
+      "replaces": "-- redacted --",
+      "description": "-- redacted --",
+      "isEnabled": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "int",
+      "defaultValue": "2",
+      "replaces": "00000002",
+      "description": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "-- redacted --"
+    },
+    "-- redacted --": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "-- redacted --"
+    }
+  },
+  "sources": [{
+    "modifiers": [
+      {
+        "condition": "!(IncludeTest)",
+        "exclude": [ "src/PROJECT_NAME_**Tests/**/*" ]
+      }, 
+      {
+        "condition": "!(Include-- redacted --)",
+        "exclude": [ "src/PROJECT_NAME_**-- redacted --**/**/*" ]
+      },
+      {
+        "condition": "!(-- redacted --)",
+        "exclude": [ "src/PROJECT_NAME_BusinessRules/Configuration/PROJECT_NAME_-- redacted --.cs" ]
+      }
+    ]
+  }]
+}

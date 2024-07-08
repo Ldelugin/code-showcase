@@ -1,0 +1,8 @@
+<Project>
+    <PropertyGroup Label="Version settings">
+        <TemplateVersion Condition="'$(TemplateVersion)' == ''">1.0.0.5</TemplateVersion>
+        <Version>$(TemplateVersion)</Version>
+        <AssemblyVersion>$(TemplateVersion)</AssemblyVersion>
+        <PackageVersion>$(TemplateVersion)</PackageVersion>
+    </PropertyGroup>
+</Project>
